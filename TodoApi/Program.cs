@@ -1,28 +1,51 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApi;
-using TodoApi.Migrations;
+using HeroApi;
+
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("TodoApiDatabase");
-// Add services to the container.
 
+var connectionString = builder.Configuration.GetConnectionString("HeroApiDatabase");
+// Add services to the container.
+//builder.Services.AddTransient<DataSeeder>();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TodoContext>(opt =>
-    opt.UseInMemoryDatabase("TodoList")); 
-builder.Services.AddTransient<DataSeeder>();
+builder.Services.AddDbContext<HeroContext>(opt =>
+    opt.UseSqlServer(connectionString));
+var devCorsPolicy = "devCorsPolicy";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(devCorsPolicy, builder => {
+        //builder.WithOrigins("http://localhost:800").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        //builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+        //builder.SetIsOriginAllowed(origin => true);
+    });
+});
+
 //builder.Services.AddSwaggerGen(c =>
 //{
-//    c.SwaggerDoc("v1", new() { Title = "TodoApi", Version = "v1" });
+//    c.SwaggerDoc("v1", new() { Title = "HeroApi", Version = "v1" });
 //});
 
 var app = builder.Build();
-//Seed Data
 
+//if (args.Length == 1 && args[0].ToLower() == "seeddata")
+//    SeedData(app);
+
+////Seed Data
+//void SeedData(IHost app)
+//{
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var service = scope.ServiceProvider.GetService<DataSeeder>();
+//        service.Seed();
+//    }
+//}
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseCors(devCorsPolicy);
     //app.UseSwagger();
     //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TodoApi v1"));
 }

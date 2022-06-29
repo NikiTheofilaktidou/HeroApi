@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using HeroApi.Models;
 
-namespace TodoApi
+namespace HeroApi
 {
-    public class TodoContext :DbContext
+    public class HeroContext :DbContext
     {
 
         protected readonly IConfiguration Configuration;
 
-        public TodoContext(IConfiguration configuration)
+        public HeroContext(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -16,9 +16,9 @@ namespace TodoApi
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // connect to sql server with connection string from app settings
-            options.UseSqlServer(Configuration.GetConnectionString("TodoApiDatabase"));
+            options.UseSqlServer(Configuration.GetConnectionString("HeroApiDatabase"));
         }
 
-        public DbSet<TodoItem> TodoItems { get; set; } = null!;
+        public DbSet<HeroModel> Heroes { get; set; } = null!;
     }
 }
